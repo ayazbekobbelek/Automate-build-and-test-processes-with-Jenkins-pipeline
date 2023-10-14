@@ -2,6 +2,7 @@
 
 import subprocess
 import os
+import sys
 
 
 def run_git_command(command, repo_dir):
@@ -38,6 +39,33 @@ def update_repository(repo_dir):
     merge_result = run_git_command(['merge'], repo_dir)
     return merge_result
 
-# Example usage:
-# clone_repository('https://github.com/your-repo.git', '/path/to/destination')
-# update_repository('/path/to/repo_directory')
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: sync.py [clone|update] [repository_url] [destination_folder]")
+        sys.exit(1)
+
+    action = sys.argv[1].lower()
+
+    if action == 'clone':
+        if len(sys.argv) != 4:
+            print("Usage: sync.py clone [repository_url] [destination_folder]")
+            sys.exit(1)
+        repo_url = sys.argv[2]
+        destination_folder = sys.argv[3]
+        clone_repository(repo_url, destination_folder)
+
+    elif action == 'update':
+        if len(sys.argv) != 3:
+            print("Usage: sync.py update [repository_folder]")
+            sys.exit(1)
+        repo_folder = sys.argv[2]
+        update_repository(repo_folder)
+
+    else:
+        print("Invalid action. Use 'clone' or 'update'.")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
