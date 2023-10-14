@@ -4,7 +4,6 @@ pipeline {
     environment {
         REPO_URL = 'https://github.com/Astrodynamic/DNA_Analazer-Algorithms-for-working-with-text-in-CPP.git'
         DESTINATION_FOLDER = '/Users/belekayazbekov/Desktop/test'
-        // Optionally, you can define GIT_USERNAME and GIT_PASSWORD for authentication in sync.py
     }
 
     stages {
@@ -26,9 +25,6 @@ pipeline {
     }
 
     post {
-        always {
-            echo 'This will always be executed.'
-        }
         success {
             echo 'Job succeeded!'
         }
