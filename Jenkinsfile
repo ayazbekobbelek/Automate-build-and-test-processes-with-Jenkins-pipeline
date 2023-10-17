@@ -39,7 +39,7 @@ pipeline {
     post {
         always {
             // This will always run regardless of success or failure.
-            archiveArtifacts artifacts: '**/build/*', allowEmptyArchive: true
+            archiveArtifacts artifacts: '*', allowEmptyArchive: true
         }
         success {
             echo 'Job succeeded!'
