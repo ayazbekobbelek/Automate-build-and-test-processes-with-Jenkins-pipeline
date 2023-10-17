@@ -13,12 +13,14 @@ logging.basicConfig(level=logging.INFO,
 
 def run_command(command, working_dir):
     """
-    Run a shell command in the specified directory.
+    Run a shell command in the specified directory and return its output.
     """
     try:
         logging.info("Running command: %s in directory %s", ' '.join(command), working_dir)
         output = subprocess.check_output(command, cwd=working_dir)
-        return output.decode('utf-8').strip()
+        decoded_output = output.decode('utf-8').strip()
+        logging.info("Command output:\n%s", decoded_output)  # Log the command output
+        return decoded_output
     except subprocess.CalledProcessError as e:
         logging.error("Error while running command: %s", e)
         return None
