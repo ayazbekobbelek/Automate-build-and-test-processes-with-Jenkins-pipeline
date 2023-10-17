@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        PATH = "/usr/local/bin"
         REPO_URL = 'https://github.com/Astrodynamic/DNA_Analazer-Algorithms-for-working-with-text-in-CPP.git'
         DESTINATION_FOLDER = '/Users/belekayazbekov/Desktop/test'
         BUILD_DIRECTORY = "${DESTINATION_FOLDER}"  // Define a build directory
