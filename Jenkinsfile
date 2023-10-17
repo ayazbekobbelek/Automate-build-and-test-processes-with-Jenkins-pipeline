@@ -4,6 +4,7 @@ pipeline {
     environment {
         REPO_URL = 'https://github.com/Astrodynamic/DNA_Analazer-Algorithms-for-working-with-text-in-CPP.git'
         DESTINATION_FOLDER = '/Users/belekayazbekov/Desktop/test'
+        BUILD_DIRECTORY = "${DESTINATION_FOLDER}"  // Define a build directory
     }
 
     stages {
@@ -21,10 +22,24 @@ pipeline {
                 }
             }
         }
-        // Additional stages like 'Build', 'Test', 'Deploy' etc. can be added here as needed.
+
+        stage('Compile Code') {
+            steps {
+                script {
+                    echo "Compiling C code..."
+                    sh "python3 compile.py ${DESTINATION_FOLDER} ${BUILD_DIRECTORY}"
+                }
+            }
+        }
+
+        // Additional stages like 'Test', 'Deploy' etc. can be added here as needed.
     }
 
     post {
+        always {
+            // This will always run regardless of success or failure.
+            archiveArtifacts artifacts: '**/build/*', allowEmptyArchive: true
+        }
         success {
             echo 'Job succeeded!'
         }
