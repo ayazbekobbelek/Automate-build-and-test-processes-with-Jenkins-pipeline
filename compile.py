@@ -34,12 +34,12 @@ def compile_code(source_dir, build_dir):
         os.makedirs(build_dir)
 
     # Configure with CMake
-    cmake_configure_result = run_command(['cmake', source_dir], build_dir)
+    cmake_configure_result = run_command(['#!/bin/bash cmake', source_dir], build_dir)
     if cmake_configure_result is None:
         return
 
     # Build with CMake (invokes the build system, e.g., make or ninja)
-    cmake_build_result = run_command(['cmake', '--build', '.'], build_dir)
+    cmake_build_result = run_command(['#!/bin/bash cmake', '--build', '.'], build_dir)
     if cmake_build_result is None:
         return
 
