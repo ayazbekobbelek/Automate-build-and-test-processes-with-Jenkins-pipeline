@@ -48,15 +48,15 @@ pipeline {
         }
 
         stage('Run Tests') {
-    steps {
-        script {
-            echo "Running unit tests..."
-            // Adjust the path to point to the test folder in the root of the project
-            def testExecutable = "${DESTINATION_FOLDER}/test/tests" // Replace with the actual name of your test binary
-            sh "python3 run_tests.py ${testExecutable}"
+            steps {
+                script {
+                    echo "Running unit tests..."
+                    def testBinaryDir = "${BUILD_DIRECTORY}/test" // Adjust the path according to your project structure
+                    def testBinaryName = "TEST" // This should be the actual test binary name after building with CMake
+                    sh "python3 run_tests.py ${testBinaryDir} ${testBinaryName}"
+                }
+            }
         }
-    }
-}
 
         // Additional stages like 'Test', 'Deploy' etc. can be added here as needed.
     }
