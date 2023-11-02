@@ -1,13 +1,16 @@
 pipeline {
     agent any
 
+    parameters {
+        booleanParam(name: 'ENCRYPT', defaultValue: false, description: 'Enable encryption')
+        booleanParam(name: 'COMPRESS', defaultValue: false, description: 'Enable compression')
+    }
+
     environment {
         PATH = "/usr/local/bin:${PATH}"
         REPO_URL = 'https://github.com/Astrodynamic/DNA_Analazer-Algorithms-for-working-with-text-in-CPP.git'
         DESTINATION_FOLDER = '/Users/belekayazbekov/Desktop/test'
-        BUILD_DIRECTORY = "${DESTINATION_FOLDER}"  // Define a build directory
-        SHOULD_ENCRYPT = 'false' // Set to 'false' to disable encryption
-        SHOULD_COMPRESS = 'false' // Set to 'false' to disable compression
+        BUILD_DIRECTORY = "${DESTINATION_FOLDER}/build" // Ensure this is a separate build directory
     }
 
     stages {
@@ -32,10 +35,10 @@ pipeline {
                     echo "Compiling C code..."
                     // Construct compile command with optional flags
                     def compileCommand = "python3 compile.py ${DESTINATION_FOLDER} ${BUILD_DIRECTORY}"
-                    if (env.SHOULD_ENCRYPT == 'true') {
+                    if (params.ENCRYPT) {
                         compileCommand += " --encrypt"
                     }
-                    if (env.SHOULD_COMPRESS == 'true') {
+                    if (params.COMPRESS) {
                         compileCommand += " --compress"
                     }
                     // Run the compile command
