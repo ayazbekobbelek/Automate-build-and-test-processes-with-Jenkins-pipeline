@@ -2,6 +2,7 @@ import subprocess
 import logging
 import os
 import sys
+import shutil
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
@@ -19,14 +20,14 @@ def run_command(command, working_dir):
         sys.exit(e.returncode)
 
 
-def build_tests(tests_dir, build_dir):
-    # Create build directory if it does not exist
-    os.makedirs(build_dir, exist_ok=True)
+def build_tests(test_source_dir, test_build_dir, test_executable_dir):
+    # Configure and build tests
+    subprocess.run(['cmake', test_source_dir, '-B', test_build_dir])
+    subprocess.run(['cmake', '--build', test_build_dir])
 
-    # Run CMake to generate the build system in the build directory
-    run_command(['cmake', tests_dir], build_dir)
-    # Build the tests
-    run_command(['cmake', '--build', '.'], build_dir)
+    # Find the test executable and move it to the desired directory
+    test_executable = '<test_executable_name>'  # Replace with the actual executable name
+    shutil.move(f'{test_build_dir}/{test_executable}', test_executable_dir)
 
 
 def run_tests(build_dir):
@@ -47,11 +48,8 @@ def main(tests_dir, build_dir):
     run_tests(build_dir)
 
 
-if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        logging.error("Usage: run_tests.py <tests_dir> <build_dir>")
-        sys.exit(1)
-
-    tests_dir = sys.argv[1]
-    build_dir = sys.argv[2]
-    main(tests_dir, build_dir)
+if __name__ == '__main__':
+    test_source_dir = sys.argv[1]
+    test_build_dir = sys.argv[2]
+    test_executable_dir = sys.argv[3]
+    build_tests(test_source_dir, test_build_dir, test_executable_dir)
