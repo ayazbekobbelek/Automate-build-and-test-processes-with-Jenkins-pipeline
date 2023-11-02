@@ -1,5 +1,4 @@
 import os
-import shutil
 import subprocess
 import sys
 import logging
@@ -18,7 +17,6 @@ def run_command(command, working_dir):
         logging.error(e.output.decode())
         sys.exit(e.returncode)
 
-
 def compile_tests(tests_dir, build_dir):
     """Compile the tests using CMake."""
     test_build_dir = os.path.join(build_dir, "test", "build")
@@ -31,17 +29,11 @@ def compile_tests(tests_dir, build_dir):
     # Build the tests
     run_command(['cmake', '--build', '.'], test_build_dir)
 
-    test_executable_name = 'TEST'
-    test_executable_path = os.path.join(test_build_dir, test_executable_name)
-
-    # Check if the file exists and is not a directory
-    if os.path.isfile(test_executable_path):
-        final_executable_path = os.path.join(build_dir,
-                                             test_executable_name)  # The final location for the test executable # Remove file # Remove it if it already exists
-        shutil.move(test_executable_path, build_dir)
-    else:
-        logging.error(f"Expected test executable not found: {test_executable_path}")
-        sys.exit(1)
+    # Move the test executable to the build directory if it is not already there
+    test_executable = os.path.join(test_build_dir, 'Test')  # Adjust if your executable is named differently
+    final_executable_path = os.path.join(build_dir, 'tests')  # The final location for the test executable
+    if os.path.isfile(test_executable) and not os.path.isfile(final_executable_path):
+        os.rename(test_executable, final_executable_path)
 
 def run_tests(build_dir):
     """Run all Google Test unit tests."""

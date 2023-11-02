@@ -8,8 +8,8 @@ pipeline {
 
     environment {
         PATH = "/usr/local/bin:${PATH}"
-        REPO_URL = 'https://github.com/Astrodynamic/DNA_Analazer-Algorithms-for-working-with-text-in-CPP.git'
-        DESTINATION_FOLDER = '/Users/belekayazbekov/test'
+        REPO_URL = 'https://github.com/ayazbekobbelek/DNA_Analazer-Algorithms-for-working-with-text-in-CPP.git'
+        DESTINATION_FOLDER = '/Users/belekayazbekov/project'
         BUILD_DIRECTORY = "${DESTINATION_FOLDER}/build" // Ensure this is a separate build directory
         TESTS_DIRECTORY = "${DESTINATION_FOLDER}/test"
         TEST_BUILD_DIRECTORY = "${BUILD_DIRECTORY}/test/build"
