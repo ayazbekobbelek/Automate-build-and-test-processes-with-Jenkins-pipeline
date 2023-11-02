@@ -31,7 +31,6 @@ def compile_tests(tests_dir, build_dir):
     # Build the tests
     run_command(['cmake', '--build', '.'], test_build_dir)
 
-    # The name of your test executable (replace 'your_test_executable_name' with the actual name)
     test_executable_name = 'TEST'
     test_executable_path = os.path.join(test_build_dir, test_executable_name)
 
@@ -39,7 +38,7 @@ def compile_tests(tests_dir, build_dir):
     if os.path.isfile(test_executable_path):
         final_executable_path = os.path.join(build_dir,
                                              test_executable_name)  # The final location for the test executable # Remove file # Remove it if it already exists
-        shutil.move(test_executable_path, final_executable_path)
+        shutil.move(test_executable_path, build_dir)
     else:
         logging.error(f"Expected test executable not found: {test_executable_path}")
         sys.exit(1)
