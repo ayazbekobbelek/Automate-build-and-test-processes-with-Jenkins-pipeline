@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                     echo "Compiling C code..."
-                    sh "python3 compile.py ${DESTINATION_FOLDER} ${BUILD_DIRECTORY}"
+                    sh "python3 compile.py ${DESTINATION_FOLDER} ${BUILD_FOLDER} --encrypt --compress"
                 }
             }
         }
