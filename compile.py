@@ -1,10 +1,9 @@
+import argparse
 import subprocess
 import logging
-import sys
 import os
 from zipfile import ZipFile
 from cryptography.fernet import Fernet
-
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
@@ -21,7 +20,7 @@ def run_command(command, working_dir):
     except subprocess.CalledProcessError as e:
         logging.error(f"Command '{' '.join(command)}' failed with return code {e.returncode}")
         logging.error(e.output.decode('utf-8'))
-        sys.exit(e.returncode)
+        raise
 
 
 def compile_code(source_dir, build_dir):
@@ -67,39 +66,42 @@ def compress_files(build_dir):
     logging.info(f"Build directory {build_dir} compressed into {zip_filename}.")
 
 
+def parse_arguments():
+    """
+    Parse command line arguments.
+    """
+    parser = argparse.ArgumentParser(description='Compile, encrypt, and optionally compress C code.')
+    parser.add_argument('source_dir', help='Directory of the source files.')
+    parser.add_argument('build_dir', help='Directory for the build output.')
+    parser.add_argument('--encrypt', action='store_true', help='Encrypt the source files after compilation.')
+    parser.add_argument('--compress', action='store_true', help='Compress the source files after encryption.')
+    return parser.parse_args()
+
 
 def main():
-    if len(sys.argv) < 3:
-        logging.error("Usage: python compile.py <source_directory> <build_directory> [--encrypt] [--compress]")
-        sys.exit(1)
+    args = parse_arguments()
 
-    source_directory = sys.argv[1]
-    build_directory = sys.argv[2]
-    should_encrypt = '--encrypt' in sys.argv
-    should_compress = '--compress' in sys.argv
+    compile_code(args.source_dir, args.build_dir)
 
-    compile_code(source_directory, build_directory)
-
-    key = Fernet.generate_key()
-    fernet = Fernet(key)
-
-    # If encryption is needed
-    if should_encrypt:
-        for root, dirs, files in os.walk(build_directory):
+    key = None
+    if args.encrypt:
+        key = Fernet.generate_key()
+        for root, dirs, files in os.walk(args.build_dir):
             for file in files:
                 file_path = os.path.join(root, file)
                 if os.path.isfile(file_path) and not file_path.endswith('.enc'):
                     encrypt_file(file_path, key)
 
-    # Compression step
-    if should_compress:
-        compress_files(build_directory)
+    if args.compress:
+        compress_files(args.build_dir)
 
-    # You can output the key to a file or pass it securely to whoever needs to decrypt the files
-    with open('encryption.key', 'wb') as keyfile:
-        keyfile.write(key)
+    if key:
+        with open('encryption.key', 'wb') as keyfile:
+            keyfile.write(key)
+            logging.info("Encryption key is saved to 'encryption.key'.")
 
     logging.info("Compilation and packaging completed.")
+
 
 if __name__ == "__main__":
     main()
