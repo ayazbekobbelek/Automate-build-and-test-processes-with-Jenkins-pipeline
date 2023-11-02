@@ -11,7 +11,7 @@ pipeline {
         REPO_URL = 'https://github.com/Astrodynamic/DNA_Analazer-Algorithms-for-working-with-text-in-CPP.git'
         DESTINATION_FOLDER = '/Users/belekayazbekov/Desktop/test'
         BUILD_DIRECTORY = "${DESTINATION_FOLDER}/build" // Ensure this is a separate build directory
-        TESTS_DIRECTORY = "${DESTINATION_FOLDER}/tests"
+        TESTS_DIRECTORY = "${DESTINATION_FOLDER}/test"
     }
 
     stages {
