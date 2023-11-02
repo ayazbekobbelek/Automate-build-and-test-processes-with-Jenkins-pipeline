@@ -97,9 +97,10 @@ pipeline {
 def sendEmailNotification(String subject, String body) {
     emailext (
         subject: subject,
-        body: body,
+        body: "${body}\n\nCheck the Jenkins build here: ${env.BUILD_URL}",
         recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-        to: 'ayazbekov2002@gmail.com', // replace with actual recipient
+        to: 'developer@example.com', // replace with actual recipient
         replyTo: 'jenkins@example.com' // replace with actual reply-to address
     )
 }
+
