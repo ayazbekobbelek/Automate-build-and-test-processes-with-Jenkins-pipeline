@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    parameters {
-        booleanParam(name: 'ENCRYPT', defaultValue: false, description: 'Enable encryption')
-        booleanParam(name: 'COMPRESS', defaultValue: false, description: 'Enable compression')
-    }
 
     environment {
         PATH = "/usr/local/bin:${PATH}"
