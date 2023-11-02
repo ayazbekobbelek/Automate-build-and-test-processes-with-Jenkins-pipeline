@@ -37,20 +37,27 @@ def compile_code(source_dir, build_dir):
     run_command(['cmake', '--build', build_dir], build_dir)
 
 
-def encrypt_file(file_path, key):
+def encrypt_file(file_path, key, encrypted_dir):
     """
-    Encrypt a file using Fernet symmetric encryption.
+    Encrypt a file using Fernet symmetric encryption and store it in a separate directory.
     """
+    # Ensure the encrypted_dir exists
+    os.makedirs(encrypted_dir, exist_ok=True)
+
+    # Determine the path for the encrypted file
+    encrypted_file_path = os.path.join(encrypted_dir, os.path.basename(file_path) + ".enc")
+
+    # Encrypt and write the file
     fernet = Fernet(key)
     with open(file_path, 'rb') as file:
         original = file.read()
 
     encrypted = fernet.encrypt(original)
 
-    with open(file_path + ".enc", 'wb') as encrypted_file:
+    with open(encrypted_file_path, 'wb') as encrypted_file:
         encrypted_file.write(encrypted)
 
-    logging.info(f"File {file_path} encrypted.")
+    logging.info(f"File {file_path} encrypted to {encrypted_file_path}.")
 
 
 def compress_files(build_dir):
@@ -70,11 +77,11 @@ def parse_arguments():
     """
     Parse command line arguments.
     """
-    parser = argparse.ArgumentParser(description='Compile, encrypt, and optionally compress C code.')
-    parser.add_argument('source_dir', help='Directory of the source files.')
-    parser.add_argument('build_dir', help='Directory for the build output.')
-    parser.add_argument('--encrypt', action='store_true', help='Encrypt the source files after compilation.')
-    parser.add_argument('--compress', action='store_true', help='Compress the source files after encryption.')
+    parser = argparse.ArgumentParser(description="Compile, encrypt, and compress code.")
+    parser.add_argument("source_dir", help="The source directory where the code is located.")
+    parser.add_argument("build_dir", help="The build directory where the compiled code will be placed.")
+    parser.add_argument("--encrypt", help="Encrypt the compiled files.", action="store_true")
+    parser.add_argument("--compress", help="Compress the build directory into a zip file.", action="store_true")
     return parser.parse_args()
 
 
@@ -83,24 +90,36 @@ def main():
 
     compile_code(args.source_dir, args.build_dir)
 
-    key = None
-    if args.encrypt:
+    # Encryption and compression
+    if args.encrypt or args.compress:
+        # Directory to hold encrypted files
+        encrypted_dir = os.path.join(args.build_dir, "encrypted")
+
         key = Fernet.generate_key()
-        for root, dirs, files in os.walk(args.build_dir):
-            for file in files:
-                file_path = os.path.join(root, file)
-                if os.path.isfile(file_path) and not file_path.endswith('.enc'):
-                    encrypt_file(file_path, key)
 
-    if args.compress:
-        compress_files(args.build_dir)
+        # If encryption is needed
+        if args.encrypt:
+            for root, dirs, files in os.walk(args.build_dir):
+                # Skip .git or other directories if needed
+                if '.git' in dirs:
+                    dirs.remove('.git')
 
-    if key:
-        with open('encryption.key', 'wb') as keyfile:
-            keyfile.write(key)
-            logging.info("Encryption key is saved to 'encryption.key'.")
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    # Avoid encrypting already encrypted or non-target files
+                    if not file_path.startswith(encrypted_dir) and not file_path.endswith('.enc'):
+                        encrypt_file(file_path, key, encrypted_dir)
 
-    logging.info("Compilation and packaging completed.")
+        # Compression step
+        if args.compress:
+            compress_files(args.build_dir)
+
+        # Save the encryption key if necessary
+        if args.encrypt:
+            with open(os.path.join(encrypted_dir, 'encryption.key'), 'wb') as keyfile:
+                keyfile.write(key)
+
+        logging.info("Compilation and packaging completed.")
 
 
 if __name__ == "__main__":
