@@ -26,7 +26,7 @@ def build_tests(test_source_dir, test_build_dir, test_executable_dir):
     subprocess.run(['cmake', '--build', test_build_dir])
 
     # Find the test executable and move it to the desired directory
-    test_executable = '<test_executable_name>'  # Replace with the actual executable name
+    test_executable = 'TEST'  # Replace with the actual executable name
     shutil.move(f'{test_build_dir}/{test_executable}', test_executable_dir)
 
 
