@@ -38,12 +38,7 @@ def compile_tests(tests_dir, build_dir):
     # Check if the file exists and is not a directory
     if os.path.isfile(test_executable_path):
         final_executable_path = os.path.join(build_dir,
-                                             test_executable_name)  # The final location for the test executable
-        if os.path.exists(final_executable_path):
-            if os.path.isdir(final_executable_path):
-                shutil.rmtree(final_executable_path)  # Remove directory tree
-            else:
-                os.remove(final_executable_path)  # Remove file # Remove it if it already exists
+                                             test_executable_name)  # The final location for the test executable # Remove file # Remove it if it already exists
         shutil.move(test_executable_path, final_executable_path)
     else:
         logging.error(f"Expected test executable not found: {test_executable_path}")
