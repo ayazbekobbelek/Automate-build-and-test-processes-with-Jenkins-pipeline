@@ -61,17 +61,16 @@ def encrypt_file(file_path, key, encrypted_dir):
 
 
 def compress_files(build_dir):
-    """
-    Compress the contents of the build directory into a zip file using Zip64 for large files.
-    """
     zip_filename = os.path.join(build_dir, "build_artifacts.zip")
     with ZipFile(zip_filename, 'w', allowZip64=True) as zipf:
-        for root, _, files in os.walk(build_dir):
+        for root, dirs, files in os.walk(build_dir):
             for file in files:
                 file_path = os.path.join(root, file)
-                # Add the file to the zip file; specifying the arcname sets the name within the zip file
-                zipf.write(file_path, arcname=os.path.relpath(file_path, build_dir))
-    logging.info(f"Build directory {build_dir} compressed into {zip_filename}.")
+                if file_path == zip_filename:
+                    continue  # Don't include the zip file itself
+                logging.info(f"Compressing: {file_path}")
+                zipf.write(file_path, os.path.relpath(file_path, build_dir))
+
 
 
 def parse_arguments():
