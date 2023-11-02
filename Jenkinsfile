@@ -59,6 +59,15 @@ pipeline {
             }
         }
 
+        stage('Run Static Code Analysis') {
+            steps {
+                script {
+                    echo "Running static code analyzer"
+                    sh "python3 run_static_analysis.py ${DESTINATION_FOLDER}"
+                }
+            }
+        }
+
 
         // Additional stages like 'Test', 'Deploy' etc. can be added here as needed.
     }
