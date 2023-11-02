@@ -6,6 +6,8 @@ pipeline {
         REPO_URL = 'https://github.com/Astrodynamic/DNA_Analazer-Algorithms-for-working-with-text-in-CPP.git'
         DESTINATION_FOLDER = '/Users/belekayazbekov/Desktop/test'
         BUILD_DIRECTORY = "${DESTINATION_FOLDER}"  // Define a build directory
+        SHOULD_ENCRYPT = 'true' // or 'false' based on your requirement
+        SHOULD_COMPRESS = 'true' // or 'false' based on your requirement
     }
 
     stages {
@@ -28,7 +30,7 @@ pipeline {
             steps {
                 script {
                     echo "Compiling C code..."
-                    sh "python3 compile.py ${DESTINATION_FOLDER} ${BUILD_FOLDER} --encrypt --compress"
+                    sh "python3 compile.py ${DESTINATION_FOLDER} --encrypt=${SHOULD_ENCRYPT} --compress=${SHOULD_COMPRESS}"
                 }
             }
         }
