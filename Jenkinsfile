@@ -74,14 +74,32 @@ pipeline {
 
     post {
         always {
-            // This will always run regardless of success or failure.
+            // This will always run regardless of the success or failure.
             archiveArtifacts artifacts: '**/build/**', allowEmptyArchive: true
         }
         success {
-            echo 'Job succeeded!'
+            script {
+                def emailSubject = "Build Successful"
+                def emailBody = "The build completed successfully. Check the artifacts for details."
+                sendEmailNotification(emailSubject, emailBody)
+            }
         }
         failure {
-            echo 'Job failed!'
+            script {
+                def emailSubject = "Build Failed"
+                def emailBody = "The build failed. Please check the Jenkins logs for more information."
+                sendEmailNotification(emailSubject, emailBody)
+            }
         }
     }
+}
+
+def sendEmailNotification(String subject, String body) {
+    emailext (
+        subject: subject,
+        body: body,
+        recipientProviders: [[$class: 'DevelopersRecipientProvider']],
+        to: 'ayazbekov2002@gmail.com', // replace with actual recipient
+        replyTo: 'jenkins@example.com' // replace with actual reply-to address
+    )
 }
