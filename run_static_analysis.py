@@ -4,7 +4,12 @@ import sys
 import logging
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s [%(levelname)s] %(message)s',
+                    handlers=[
+                        logging.FileHandler("static_analysis.log"),
+                        logging.StreamHandler(sys.stdout)
+                    ])
 
 def run_command(command, working_dir='.'):
     """Run a shell command and log the output."""
