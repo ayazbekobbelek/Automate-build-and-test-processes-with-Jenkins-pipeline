@@ -39,7 +39,7 @@ def compile_tests(tests_dir, build_dir):
         final_executable_path = os.path.join(build_dir,
                                              test_executable_name)  # The final location for the test executable
         if os.path.exists(final_executable_path):
-            os.remove(final_executable_path)  # Remove it if it already exists
+            os.rmdir(final_executable_path)  # Remove it if it already exists
         os.rename(test_executable_path, final_executable_path)
     else:
         logging.error(f"Expected test executable not found: {test_executable_path}")
