@@ -12,6 +12,7 @@ pipeline {
         DESTINATION_FOLDER = '/Users/belekayazbekov/Desktop/test'
         BUILD_DIRECTORY = "${DESTINATION_FOLDER}/build" // Ensure this is a separate build directory
         TESTS_DIRECTORY = "${DESTINATION_FOLDER}/test"
+        TEST_BUILD_DIRECTORY = "${BUILD_DIRECTORY}/test/build"
     }
 
     stages {
@@ -52,7 +53,7 @@ pipeline {
                 script {
                     echo "Running unit tests..."
                     // Assuming the test script is named run_tests.py and is located in the same directory as compile.py
-                    def testCommand = "python3 run_tests.py ${TESTS_DIRECTORY} ${BUILD_DIRECTORY}/test"
+                    def testCommand = "python3 build_and_run_tests.py ${DESTINATION_FOLDER} ${TEST_BUILD_DIRECTORY}"
                     sh testCommand
                 }
             }
