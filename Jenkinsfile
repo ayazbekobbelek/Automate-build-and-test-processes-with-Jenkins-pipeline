@@ -11,6 +11,7 @@ pipeline {
         REPO_URL = 'https://github.com/Astrodynamic/DNA_Analazer-Algorithms-for-working-with-text-in-CPP.git'
         DESTINATION_FOLDER = '/Users/belekayazbekov/Desktop/test'
         BUILD_DIRECTORY = "${DESTINATION_FOLDER}/build" // Ensure this is a separate build directory
+        TESTS_DIRECTORY = "${DESTINATION_FOLDER}/tests"
     }
 
     stages {
@@ -46,17 +47,17 @@ pipeline {
                 }
             }
         }
-
         stage('Run Tests') {
             steps {
                 script {
                     echo "Running unit tests..."
-                    def testBinaryDir = "${BUILD_DIRECTORY}/test" // Adjust the path according to your project structure
-                    def testBinaryName = "TEST" // This should be the actual test binary name after building with CMake
-                    sh "python3 run_tests.py ${testBinaryDir} ${testBinaryName}"
+                    // Assuming the test script is named run_tests.py and is located in the same directory as compile.py
+                    def testCommand = "python3 run_tests.py ${TESTS_DIRECTORY} ${BUILD_DIRECTORY}/tests"
+                    sh testCommand
                 }
             }
         }
+
 
         // Additional stages like 'Test', 'Deploy' etc. can be added here as needed.
     }
