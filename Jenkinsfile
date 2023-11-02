@@ -30,7 +30,7 @@ pipeline {
             steps {
                 script {
                     echo "Compiling C code..."
-                    sh "python3 compile.py ${DESTINATION_FOLDER} --encrypt=${SHOULD_ENCRYPT} --compress=${SHOULD_COMPRESS}"
+                    sh "python3 compile.py ${DESTINATION_FOLDER} --encrypt --compress"
                 }
             }
         }
