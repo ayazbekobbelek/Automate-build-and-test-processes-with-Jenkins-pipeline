@@ -48,13 +48,15 @@ pipeline {
         }
 
         stage('Run Tests') {
-            steps {
-                script {
-                    echo "Running unit tests..."
-                    sh "python3 run_tests.py ${BUILD_DIRECTORY}"
-                }
-            }
+    steps {
+        script {
+            echo "Running unit tests..."
+            // Adjust the path to point to the test folder in the root of the project
+            def testExecutable = "${DESTINATION_FOLDER}/test/tests" // Replace with the actual name of your test binary
+            sh "python3 run_tests.py ${testExecutable}"
         }
+    }
+}
 
         // Additional stages like 'Test', 'Deploy' etc. can be added here as needed.
     }
