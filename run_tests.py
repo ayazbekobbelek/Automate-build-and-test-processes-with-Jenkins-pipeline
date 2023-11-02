@@ -30,8 +30,8 @@ def compile_tests(tests_dir, build_dir):
     run_command(['cmake', '--build', '.'], test_build_dir)
 
     # Move the test executable to the build directory if it is not already there
-    test_executable = os.path.join(test_build_dir, 'tests')  # Adjust if your executable is named differently
-    final_executable_path = os.path.join(build_dir, 'tests')  # The final location for the test executable
+    test_executable = os.path.join(test_build_dir, 'TEST')  # Adjust if your executable is named differently
+    final_executable_path = os.path.join(build_dir, 'TEST')  # The final location for the test executable
     if os.path.isfile(test_executable) and not os.path.isfile(final_executable_path):
         os.rename(test_executable, final_executable_path)
 
