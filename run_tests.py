@@ -1,56 +1,57 @@
-import os
 import subprocess
-import sys
 import logging
+import os
+import sys
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
 
+
 def run_command(command, working_dir):
-    """Run a shell command in a specific directory and log the output."""
     try:
-        logging.info(f"Running command: {' '.join(command)}")
-        result = subprocess.run(command, cwd=working_dir, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        logging.info(result.stdout.decode())
+        logging.info(f"Running command: {command}")
+        result = subprocess.run(command, cwd=working_dir, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                text=True)
+        logging.info(result.stdout)
     except subprocess.CalledProcessError as e:
-        logging.error(f"Command '{' '.join(command)}' failed with return code {e.returncode}")
-        logging.error(e.output.decode())
+        logging.error(f"Command '{e.cmd}' failed with return code {e.returncode}")
+        logging.error(e.output)
         sys.exit(e.returncode)
 
-def compile_tests(tests_dir, build_dir):
-    """Compile the tests using CMake."""
-    if not os.path.exists(build_dir):
-        os.makedirs(build_dir)
 
-    # Run CMake to configure the project for tests
+def build_tests(tests_dir, build_dir):
+    # Create build directory if it does not exist
+    os.makedirs(build_dir, exist_ok=True)
+
+    # Run CMake to generate the build system in the build directory
     run_command(['cmake', tests_dir], build_dir)
-
     # Build the tests
     run_command(['cmake', '--build', '.'], build_dir)
 
+
 def run_tests(build_dir):
-    """Run all Google Test unit tests."""
-    test_executable = os.path.join(build_dir, 'TEST')  # The name of the test executable
-    if not os.path.isfile(test_executable):
-        logging.error(f"Test executable not found: {test_executable}")
+    # Assuming the test executable is named 'test_executable'
+    test_executable = os.path.join(build_dir, 'TEST')
+    if not os.path.exists(test_executable):
+        logging.error("Test executable not found.")
         sys.exit(1)
 
+    # Run the tests
     run_command([test_executable], build_dir)
 
-def main():
+
+def main(tests_dir, build_dir):
+    # Build the tests
+    build_tests(tests_dir, build_dir)
+    # Run the tests
+    run_tests(build_dir)
+
+
+if __name__ == "__main__":
     if len(sys.argv) != 3:
-        logging.error("Usage: python3 run_tests.py <tests_dir> <build_dir>")
+        logging.error("Usage: run_tests.py <tests_dir> <build_dir>")
         sys.exit(1)
 
     tests_dir = sys.argv[1]
     build_dir = sys.argv[2]
-
-    if not os.path.isdir(tests_dir):
-        logging.error(f"Tests directory does not exist: {tests_dir}")
-        sys.exit(1)
-
-    compile_tests(tests_dir, build_dir)
-    run_tests(build_dir)
-
-if __name__ == "__main__":
-    main()
+    main(tests_dir, build_dir)

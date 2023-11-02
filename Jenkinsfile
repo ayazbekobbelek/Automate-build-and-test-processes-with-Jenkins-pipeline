@@ -52,7 +52,7 @@ pipeline {
                 script {
                     echo "Running unit tests..."
                     // Assuming the test script is named run_tests.py and is located in the same directory as compile.py
-                    def testCommand = "python3 run_tests.py ${TESTS_DIRECTORY} ${BUILD_DIRECTORY}/tests"
+                    def testCommand = "python3 run_tests.py ${TESTS_DIRECTORY} ${BUILD_DIRECTORY}/test"
                     sh testCommand
                 }
             }
