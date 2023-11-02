@@ -47,6 +47,15 @@ pipeline {
             }
         }
 
+        stage('Run Tests') {
+            steps {
+                script {
+                    echo "Running unit tests..."
+                    sh "python3 run_tests.py ${BUILD_DIRECTORY}"
+                }
+            }
+        }
+
         // Additional stages like 'Test', 'Deploy' etc. can be added here as needed.
     }
 
