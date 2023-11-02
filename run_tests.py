@@ -30,7 +30,7 @@ def compile_tests(tests_dir, build_dir):
 
 def run_tests(build_dir):
     """Run all Google Test unit tests."""
-    test_executable = os.path.join(build_dir, 'tests')  # The name of the test executable
+    test_executable = os.path.join(build_dir, 'TEST')  # The name of the test executable
     if not os.path.isfile(test_executable):
         logging.error(f"Test executable not found: {test_executable}")
         sys.exit(1)
