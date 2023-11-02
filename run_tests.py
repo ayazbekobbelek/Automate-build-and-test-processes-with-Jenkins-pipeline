@@ -17,6 +17,7 @@ def run_command(command, working_dir):
         logging.error(e.output.decode())
         sys.exit(e.returncode)
 
+
 def compile_tests(tests_dir, build_dir):
     """Compile the tests using CMake."""
     test_build_dir = os.path.join(build_dir, "test", "build")
@@ -29,11 +30,20 @@ def compile_tests(tests_dir, build_dir):
     # Build the tests
     run_command(['cmake', '--build', '.'], test_build_dir)
 
-    # Move the test executable to the build directory if it is not already there
-    test_executable = os.path.join(test_build_dir, 'TEST')  # Adjust if your executable is named differently
-    final_executable_path = os.path.join(build_dir, 'TEST')  # The final location for the test executable
-    if os.path.isfile(test_executable) and not os.path.isfile(final_executable_path):
-        os.rename(test_executable, final_executable_path)
+    # The name of your test executable (replace 'your_test_executable_name' with the actual name)
+    test_executable_name = 'TEST'
+    test_executable_path = os.path.join(test_build_dir, test_executable_name)
+
+    # Check if the file exists and is not a directory
+    if os.path.isfile(test_executable_path):
+        final_executable_path = os.path.join(build_dir,
+                                             test_executable_name)  # The final location for the test executable
+        if os.path.exists(final_executable_path):
+            os.remove(final_executable_path)  # Remove it if it already exists
+        os.rename(test_executable_path, final_executable_path)
+    else:
+        logging.error(f"Expected test executable not found: {test_executable_path}")
+        sys.exit(1)
 
 def run_tests(build_dir):
     """Run all Google Test unit tests."""
