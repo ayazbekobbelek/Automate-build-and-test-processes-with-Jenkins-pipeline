@@ -102,7 +102,7 @@ pipeline {
 
 def sendEmailNotification(String subject, String body, String attachmentPath = '') {
     def pythonEmailScript = "send_email.py"
-    def recipientEmail = 'belek.developer@gmail.com'  // Set the recipient's email
+    def recipientEmail = 'developer.belek@gmail.com'  // Set the recipient's email
     def command = "python3 ${pythonEmailScript} '${subject}' '${body}' '${recipientEmail}'"
 
     if (attachmentPath) {
