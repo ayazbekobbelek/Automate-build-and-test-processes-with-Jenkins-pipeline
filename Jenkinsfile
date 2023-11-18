@@ -73,33 +73,35 @@ pipeline {
 
     post {
         always {
-            // This will always run regardless of the success or failure.
-            archiveArtifacts artifacts: '**/build/**', allowEmptyArchive: true
+        // This will always run regardless of the success or failure.
+        archiveArtifacts artifacts: '**/build/**', allowEmptyArchive: true
+    }
+    success {
+        script {
+            def emailSubject = "Build Successful"
+            def emailBody = "The build completed successfully. Check the artifacts for details."
+            sendEmailNotification(emailSubject, emailBody, "${STATIC_ANALYSIS_LOG_FILE}")
         }
-        success {
-            script {
-                def emailSubject = "Build Successful"
-                def emailBody = "The build completed successfully. Check the artifacts for details."
-                sendEmailNotification(emailSubject, emailBody)
-            }
-        }
-        failure {
-            script {
-                def emailSubject = "Build Failed"
-                def emailBody = "The build failed. Please check the Jenkins logs for more information."
-                sendEmailNotification(emailSubject, emailBody)
-            }
+    }
+    failure {
+        script {
+            def emailSubject = "Build Failed"
+            def emailBody = "The build failed. Please check the Jenkins logs for more information."
+            sendEmailNotification(emailSubject, emailBody, "${STATIC_ANALYSIS_LOG_FILE}")
         }
     }
 }
+}
 
-def sendEmailNotification(String subject, String body) {
-    emailext (
-        subject: subject,
-        body: "${body}\n\nCheck the Jenkins build here: ${env.BUILD_URL}",
-        recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-        to: 'developer@example.com',
-        replyTo: 'jenkins@example.com'
-    )
+def sendEmailNotification(String subject, String body, String attachmentPath = '') {
+    def pythonEmailScript = "send_email.py"
+    def recipientEmail = 'belek.developer@gmail.com'  // Set the recipient's email
+    def command = "python3 ${pythonEmailScript} '${subject}' '${body}' '${recipientEmail}'"
+
+    if (attachmentPath) {
+        command += " --attachment '${attachmentPath}'"
+    }
+
+    sh command
 }
 
