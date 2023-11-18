@@ -13,6 +13,7 @@ pipeline {
         BUILD_DIRECTORY = "${DESTINATION_FOLDER}/build" // Ensure this is a separate build directory
         TESTS_DIRECTORY = "${DESTINATION_FOLDER}/test"
         TEST_BUILD_DIRECTORY = "${BUILD_DIRECTORY}/test/build"
+        STATIC_ANALYSIS_LOG_FILE = "${BUILD_DIRECTORY}/static_analysis_results.log"
     }
 
     stages {
@@ -63,13 +64,11 @@ pipeline {
             steps {
                 script {
                     echo "Running static code analyzer"
-                    sh "python3 run_static_analysis.py ${DESTINATION_FOLDER}"
+                    sh "python3 run_static_analysis.py ${DESTINATION_FOLDER} ${STATIC_ANALYSIS_LOG_FILE}"
                 }
             }
         }
 
-
-        // Additional stages like 'Test', 'Deploy' etc. can be added here as needed.
     }
 
     post {
@@ -99,8 +98,8 @@ def sendEmailNotification(String subject, String body) {
         subject: subject,
         body: "${body}\n\nCheck the Jenkins build here: ${env.BUILD_URL}",
         recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-        to: 'developer@example.com', // replace with actual recipient
-        replyTo: 'jenkins@example.com' // replace with actual reply-to address
+        to: 'developer@example.com',
+        replyTo: 'jenkins@example.com'
     )
 }
 

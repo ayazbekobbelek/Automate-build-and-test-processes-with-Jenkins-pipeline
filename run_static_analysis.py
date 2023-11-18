@@ -22,22 +22,29 @@ def run_command(command, working_dir='.'):
         logging.error(e.output.decode())
         sys.exit(e.returncode)
 
-def run_cppcheck(source_dir):
-    """Run cppcheck static code analysis."""
+def run_cppcheck(source_dir, output_file):
     command = ['cppcheck', '--enable=all', '--suppress=missingInclude', source_dir]
-    run_command(command)
+    with open(output_file, 'w') as file:
+        try:
+            result = subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            file.write(result.stdout.decode())
+            return True
+        except subprocess.CalledProcessError as e:
+            file.write(e.output.decode())
+            return False
 
 def main():
-    if len(sys.argv) != 2:
-        logging.error("Usage: python3 run_static_analysis.py <source_dir>")
+    if len(sys.argv) != 3:
+        logging.error("Usage: python3 run_static_analysis.py <source_dir> <output_file>")
         sys.exit(1)
 
     source_dir = sys.argv[1]
+    output_file = sys.argv[2]
     if not os.path.isdir(source_dir):
         logging.error(f"Source directory does not exist: {source_dir}")
         sys.exit(1)
 
-    run_cppcheck(source_dir)
+    run_cppcheck(source_dir, output_file)
 
 if __name__ == "__main__":
     main()
