@@ -17,6 +17,13 @@ pipeline {
     }
 
     stages {
+        stage('Setup python environment') {
+            steps {
+                script {
+                    sh 'pip install --upgrade google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client'
+                }
+            }
+        }
         stage('Clone/Update Repository') {
             steps {
                 script {
